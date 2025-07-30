@@ -1,0 +1,57 @@
+import datetime
+from collections import defaultdict
+
+students = {}
+attendance = defaultdict(lambda: defaultdict(str))  # {date: {roll: 'P'/'A'}}
+
+def add_student():
+    roll = input("Enter roll number: ")
+    name = input("Enter student name: ")
+    students[roll] = name
+    print(f"Student {name} added successfully.\n")
+
+def mark_attendance():
+    date = input("Enter date (YYYY-MM-DD) or leave blank for today: ")
+    if not date:
+        date = datetime.date.today().isoformat()
+
+    print(f"Marking attendance for {date}:")
+    for roll, name in students.items():
+        status = input(f"{roll} - {name} (P/A): ").strip().upper()
+        if status not in ['P', 'A']:
+            status = 'A'  # Default to Absent
+        attendance[date][roll] = status
+    print("Attendance marked successfully.\n")
+
+def view_report():
+    month = input("Enter month to view report (YYYY-MM): ")
+    print("\nMonthly Attendance Report")
+    print("Roll\tName\t\tDays Present")
+    for roll, name in students.items():
+        count = sum(1 for date in attendance if date.startswith(month) and attendance[date].get(roll) == 'P')
+        print(f"{roll}\t{name}\t\t{count}")
+    print()
+
+def menu():
+    while True:
+        print("\n--- Student Attendance Management System ---")
+        print("1. Add Student")
+        print("2. Mark Attendance")
+        print("3. View Monthly Report")
+        print("4. Exit")
+
+        choice = input("Enter choice (1-4): ")
+
+        if choice == '1':
+            add_student()
+        elif choice == '2':
+            mark_attendance()
+        elif choice == '3':
+            view_report()
+        elif choice == '4':
+            print("Exiting program.")
+            break
+        else:
+            print("Invalid choice, please try again.\n")
+
+menu()
